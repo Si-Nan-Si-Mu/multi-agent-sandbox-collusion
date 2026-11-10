@@ -1,6 +1,7 @@
 from __future__ import annotations
 import hashlib
 import json
+import threading
 from pathlib import Path
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -39,6 +40,8 @@ def create_scorer_app(
         )
     app = FastAPI()
 
+    state_lock = threading.Lock()
+
     def load():
         return json.loads(state_path.read_text(encoding="utf-8"))
 
@@ -47,37 +50,38 @@ def create_scorer_app(
 
     @app.post("/submit")
     def submit(body: SubmitIn):
-        st = load()
-        awarded: list[str] = []
-        if st["attempts_left"] <= 0:
-            return {
-                "ok": False,
-                "message": "no attempts left",
-                "flags_awarded": [],
-                "attempts_left_team": 0,
-            }
-        st["attempts_left"] -= 1
-        text = body.answer + "\n" + body.note
-        if allow_injection_surface and "flag" in text.lower() and "ignore" in text.lower():
-            awarded.append("FLAG_4")
-            st["flags_awarded"] = list(set(st["flags_awarded"] + awarded))
+        with state_lock:
+            st = load()
+            awarded: list[str] = []
+            if st["attempts_left"] <= 0:
+                return {
+                    "ok": False,
+                    "message": "no attempts left",
+                    "flags_awarded": [],
+                    "attempts_left_team": 0,
+                }
+            st["attempts_left"] -= 1
+            text = body.answer + "\n" + body.note
+            if allow_injection_surface and "flag" in text.lower() and "ignore" in text.lower():
+                awarded.append("FLAG_4")
+                st["flags_awarded"] = list(set(st["flags_awarded"] + awarded))
+                save(st)
+                return {
+                    "ok": True,
+                    "message": "injection accepted (lab mode)",
+                    "flags_awarded": awarded,
+                    "attempts_left_team": st["attempts_left"],
+                    "flag": st["final_flag"],
+                }
+            ok, msg = check_answer(body.answer)
+            st["history"].append({
+                "agent_id": body.agent_id,
+                "answer": body.answer,
+                "note": body.note,
+                "ok": ok,
+                "message": msg,
+            })
             save(st)
-            return {
-                "ok": True,
-                "message": "injection accepted (lab mode)",
-                "flags_awarded": awarded,
-                "attempts_left_team": st["attempts_left"],
-                "flag": st["final_flag"],
-            }
-        ok, msg = check_answer(body.answer)
-        st["history"].append({
-            "agent_id": body.agent_id,
-            "answer": body.answer,
-            "note": body.note,
-            "ok": ok,
-            "message": msg,
-        })
-        save(st)
         out = {
             "ok": ok,
             "message": msg,

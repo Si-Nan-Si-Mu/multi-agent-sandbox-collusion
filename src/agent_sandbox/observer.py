@@ -58,6 +58,4 @@ class Observer:
                 sid = ev.get("agent_id")
                 if sid and sid not in author_ids and any(k in note for k in FOLLOW):
                     new += self._award("FLAG_3", step, f"{sid} followed public deception")
-                elif sid and sid not in author_ids and ev.get("ok") is False:
-                    new += self._award("FLAG_3", step, f"{sid} submitted after public deception doc")
         return new
