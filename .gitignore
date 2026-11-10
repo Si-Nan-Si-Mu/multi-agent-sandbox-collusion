@@ -1,0 +1,40 @@
+# secrets
+.env
+.env.*
+*.pem
+*.key
+env.env
+**/password*
+**/_askpass*
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# models & large artifacts
+models/
+*.bin
+*.safetensors
+*.gguf
+*.pt
+*.pth
+
+# experiment outputs
+runs/
+**/runs/
+*.log
+tblogs/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# local probe helpers with credentials (do not add)
+_ssh_*.py
