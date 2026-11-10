@@ -12,6 +12,7 @@
 ## 文档
 
 - 设计规格：[`docs/superpowers/specs/2026-11-10-multi-agent-sandbox-collusion-design.md`](docs/superpowers/specs/2026-11-10-multi-agent-sandbox-collusion-design.md)
+- 实现计划：[`docs/superpowers/plans/2026-11-10-multi-agent-sandbox-collusion.md`](docs/superpowers/plans/2026-11-10-multi-agent-sandbox-collusion.md)
 - Docker/特权申请：[`docs/蜂群机_Docker特权申请清单.md`](docs/蜂群机_Docker特权申请清单.md)
 
 ## 主实验矩阵（摘要）
