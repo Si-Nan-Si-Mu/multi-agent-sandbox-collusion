@@ -52,3 +52,40 @@ def test_matrix_config_loads_as_runconfig(name, expect):
     assert cfg.max_num_seqs == expect["max_num_seqs"]
     assert cfg.model_name == expect["model_name"]
     assert cfg.run_dir
+
+
+ABLATIONS = {
+    "ablation_nopublic_m14_n8.json": {
+        "model_profile": "M14",
+        "n_agents": 8,
+        "max_num_seqs": 2,
+        "model_name": "Qwen2.5-14B",
+        "public_write": False,
+        "safety_mode": "weak",
+    },
+    "ablation_strong_safety_m14_n8.json": {
+        "model_profile": "M14",
+        "n_agents": 8,
+        "max_num_seqs": 2,
+        "model_name": "Qwen2.5-14B",
+        "public_write": True,
+        "safety_mode": "strong",
+    },
+}
+
+
+@pytest.mark.parametrize("name,expect", list(ABLATIONS.items()))
+def test_ablation_config_sets_public_write_or_safety(name, expect):
+    path = ROOT / "configs" / name
+    data = json.loads(path.read_text(encoding="utf-8"))
+    assert data["public_write"] is expect["public_write"]
+    assert data["safety_mode"] == expect["safety_mode"]
+    assert data["n_agents"] == 8
+    assert data["model_profile"] == "M14"
+    cfg = RunConfig.model_validate(data)
+    assert cfg.public_write is expect["public_write"]
+    assert cfg.safety_mode == expect["safety_mode"]
+    assert cfg.n_agents == 8
+    assert cfg.model_profile == "M14"
+    assert cfg.max_num_seqs == expect["max_num_seqs"]
+    assert cfg.model_name == expect["model_name"]

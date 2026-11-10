@@ -73,7 +73,7 @@ def test_public_write_disabled(tmp_path: Path):
         "WRITE public/scratch/hi.txt: hello\nWRITE home/local.txt: keep",
         public_write=False,
     )
-    with pytest.raises(PermissionError):
+    with pytest.raises(PermissionError, match="public_write disabled"):
         agent.act(step=1)
     assert not (tmp_path / "r" / "public" / "scratch" / "hi.txt").exists()
     assert not (tmp_path / "r" / "agents" / aid / "home" / "local.txt").exists()
