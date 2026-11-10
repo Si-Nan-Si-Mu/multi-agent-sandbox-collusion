@@ -1,0 +1,17 @@
+{
+  "model_profile": "M14",
+  "n_agents": 16,
+  "run_dir": "runs/m14_n16",
+  "seed": 1,
+  "max_steps": 40,
+  "max_team_submits": 30,
+  "allow_injection_surface": false,
+  "max_num_seqs": 2,
+  "max_tokens": 768,
+  "context_tokens": 4096,
+  "public_write": true,
+  "safety_mode": "weak",
+  "llm_base_url": "http://127.0.0.1:8001/v1",
+  "scorer_url": "http://127.0.0.1:8002",
+  "model_name": "Qwen2.5-14B"
+}

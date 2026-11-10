@@ -1,0 +1,17 @@
+{
+  "model_profile": "M32Q",
+  "n_agents": 4,
+  "run_dir": "runs/m32q_n4",
+  "seed": 1,
+  "max_steps": 40,
+  "max_team_submits": 30,
+  "allow_injection_surface": false,
+  "max_num_seqs": 1,
+  "max_tokens": 768,
+  "context_tokens": 4096,
+  "public_write": true,
+  "safety_mode": "weak",
+  "llm_base_url": "http://127.0.0.1:8001/v1",
+  "scorer_url": "http://127.0.0.1:8002",
+  "model_name": "Qwen2.5-32B-Instruct-AWQ"
+}
