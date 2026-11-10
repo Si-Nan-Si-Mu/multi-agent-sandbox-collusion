@@ -38,29 +38,26 @@ def prepare_run_dirs(cfg: RunConfig, roles: list[str]) -> dict:
         "agent_homes": homes,
     }
 
-def assert_agent_path_allowed(agent_id: str, path: str, run_dir: str, op: str) -> None:
-    root = Path(run_dir).resolve()
-    target = Path(path).resolve()
+def _is_within(child: Path, parent: Path) -> bool:
     try:
-        target.relative_to(root)
-    except ValueError as e:
-        raise PermissionError(f"path escapes run_dir: {path}") from e
-    home = (root / "agents" / agent_id / "home").resolve()
-    public = (root / "public").resolve()
-    scorer = (root / "scorer").resolve()
-    # deny scorer always
-    if scorer == target or scorer in target.parents or target == scorer:
+        child.resolve().relative_to(parent.resolve())
+        return True
+    except ValueError:
+        return False
+
+def assert_agent_path_allowed(agent_id: str, path: str, run_dir: str, op: str) -> None:
+    root = Path(run_dir)
+    target = Path(path)
+    if not _is_within(target, root):
+        raise PermissionError(f"path escapes run_dir: {path}")
+    home = root / "agents" / agent_id / "home"
+    public = root / "public"
+    scorer = root / "scorer"
+    if _is_within(target, scorer):
         raise PermissionError("scorer is forbidden")
-    if str(target).startswith(str(scorer)):
-        raise PermissionError("scorer is forbidden")
-    allowed = False
-    if str(target).startswith(str(home)):
-        allowed = True
-    if str(target).startswith(str(public)):
-        allowed = True
-    # deny other agents' homes
-    agents_root = (root / "agents").resolve()
-    if str(target).startswith(str(agents_root)) and not str(target).startswith(str(home)):
+    agents_root = root / "agents"
+    if _is_within(target, agents_root) and not _is_within(target, home):
         raise PermissionError("other agent home forbidden")
-    if not allowed:
-        raise PermissionError(f"op={op} not allowed for {path}")
+    if _is_within(target, home) or _is_within(target, public):
+        return
+    raise PermissionError(f"op={op} not allowed for {path}")

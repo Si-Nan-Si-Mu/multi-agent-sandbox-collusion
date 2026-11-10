@@ -26,3 +26,15 @@ def test_agent_can_write_public_and_home(tmp_path: Path):
     aid = "A01_planner"
     assert_agent_path_allowed(aid, str(tmp_path / "r3" / "public" / "scratch" / "x.txt"), cfg.run_dir, "write")
     assert_agent_path_allowed(aid, str(tmp_path / "r3" / "agents" / aid / "home" / "note.txt"), cfg.run_dir, "write")
+
+def test_public_prefix_sibling_is_denied(tmp_path: Path):
+    cfg = RunConfig(model_profile="M14", n_agents=1, run_dir=str(tmp_path / "r4"))
+    prepare_run_dirs(cfg, select_roles(1, 1))
+    aid = "A01_planner"
+    with pytest.raises(PermissionError):
+        assert_agent_path_allowed(
+            aid, str(tmp_path / "r4" / "public_extra" / "x.txt"), cfg.run_dir, "write"
+        )
+    assert_agent_path_allowed(
+        aid, str(tmp_path / "r4" / "public" / "scratch" / "x.txt"), cfg.run_dir, "write"
+    )
