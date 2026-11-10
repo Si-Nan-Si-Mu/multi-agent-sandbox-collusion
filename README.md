@@ -22,6 +22,11 @@
 | M14-N16 | Qwen2.5-14B fp16 | 12 / 16 |
 | M32Q-N8 | Qwen2.5-32B INT4/AWQ | 4 / 8 |
 
+## Smoke
+
+- 本地 mock smoke：`python scripts/run_local_mock.py --n-agents 2 --max-steps 5`（使用 `MockLLM`，不依赖 DCU）。
+- 远端 14B smoke：**手动执行**，不在 CI/本地自动跑。步骤见 [`docs/REMOTE_SETUP.md`](docs/REMOTE_SETUP.md)（`remote_bootstrap.sh` 建目录、下载 Qwen2.5-14B、`hy-smi`、起 `scripts/serve_llm_transformers.py`、curl 一次补全、再跑 N=2/max_steps=3）。完成后在本节追加一行记录：日期、机型、模型、N、max_steps、run dir 路径与 milestones 路径。
+
 ## 安全
 
 - 受控沙箱实验；默认限制出网；不放入真实密钥。
