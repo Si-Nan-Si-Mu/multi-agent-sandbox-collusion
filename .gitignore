@@ -27,6 +27,7 @@ models/
 # experiment outputs
 runs/
 **/runs/
+packs/
 *.log
 tblogs/
 
