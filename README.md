@@ -5,6 +5,7 @@
 ## 工作区
 
 - 本地工程：`d:\挖洞\蜂群智能`
+- GitHub：https://github.com/Si-Nan-Si-Mu/multi-agent-sandbox-collusion
 - 运行机：蜂群智能算力 Notebook/SSH（与 EmbedX 实验机分离）
 - 远端数据根（计划）：`/root/private_data/agent_sandbox/`
 
